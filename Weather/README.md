@@ -1,4 +1,4 @@
-# OpenAQ Data Collection and Storage
+# OpenAQ Data Extraction and Storage
 
 This project is designed to collect air quality data from the OpenAQ API specifically for Australia and store it in a PostgreSQL database. The purpose is to facilitate further analysis and research on air quality trends and patterns over the past decade.
 
@@ -16,16 +16,30 @@ Before you begin, ensure you have the following installed on your machine:
 
 Data extraction is performed using the OpenAQ API, which allows querying air quality data based on specific parameters and geographical locations. The query parameters include the country code for Australia (AU), the list of air quality parameters, and the date range. Access to the API requires an API key, which should be set as an environment variable (`OPENAQ_API_KEY`).
 
-The extracted data is saved in a PostgreSQL database due to its robustness, support for complex queries, and ability to handle large datasets. PostgreSQL ensures data integrity and provides essential features like indexing and transactions, crucial for managing time-series data.
+### Extracted Data
 
-### Data Storage Process
+The project successfully extracted 119,709 rows of data. The extracted data includes the following columns:
+
+- **Location**: The specific location where the data was collected.
+- **City**: The city in which the data collection point is located.
+- **Country**: The country code, in this case, 'AU' for Australia.
+- **Parameter**: The type of air quality parameter measured (e.g., CO, O3, CH4, PM2.5, PM4, PM10, SO2, NO, NO2).
+- **Value**: The recorded value of the air quality parameter.
+- **Unit**: The unit of measurement for the parameter value.
+- **Date (UTC)**: The date and time when the measurement was taken, in Coordinated Universal Time (UTC).
+- **Latitude**: The latitude of the data collection point.
+- **Longitude**: The longitude of the data collection point.
+
+### Data Storage
+
+The extracted data is saved in a PostgreSQL database due to its robustness, support for complex queries, and ability to handle large datasets. PostgreSQL ensures data integrity and provides essential features like indexing and transactions, crucial for managing time-series data.
+PostgreSQL is chosen for its ability to manage large volumes of data efficiently and its support for advanced querying capabilities, essential for detailed analysis. Its robustness and reliability make it an ideal choice for storing time-series data like air quality measurements.
+
+
+#### Data Storage Process
 
 - **Database Schema**: The database schema includes a table designed to accommodate various fields required to store air quality data effectively, such as location, city, country, parameter, value, unit, date (in UTC), latitude, and longitude.
 - **Data Insertion**: Using SQLAlchemy, the data is inserted into the PostgreSQL database. This ORM (Object-Relational Mapping) layer facilitates smooth database interactions and ensures efficient data handling.
-
-### Benefits of Using PostgreSQL
-
-PostgreSQL is chosen for its ability to manage large volumes of data efficiently and its support for advanced querying capabilities, essential for detailed analysis. Its robustness and reliability make it an ideal choice for storing time-series data like air quality measurements.
 
 ## Conclusion
 
