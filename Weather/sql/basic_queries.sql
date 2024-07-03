@@ -81,7 +81,7 @@ select sum(value) from air_quality;
 
 
 
---- for practice next time 
+--- Part-1
 --- Check for Sample Data
 --- Row Count
 --- Column Count
@@ -100,6 +100,81 @@ select sum(value) from air_quality;
 --- Sum of a Column
 
 
+--- Part - 2
+--- Filter Records Based on Condition
+--- Comparison operators: equal to, not equal to, greater than, less than, greater than or equal to, less than or equal to
+select * from air_quality
+where id = 5;
+select * from air_quality
+where value <> 0;
+select * from air_quality
+where value > 9;
+select * from air_quality
+where value >= 9;
+select * from air_quality
+where value <= 9;
+
+--- Logical operators: AND, OR, NOT
+select * from air_quality
+where value = 9.9 and parameter = 'pm25';
+
+select * from air_quality
+where value > 5 and lower(location_in_aus) = 'bathurst';
+
+SELECT * FROM air_quality
+WHERE not value > 10;
+
+--- Pattern matching: LIKE
+-- Find records where the pattern starts in the beginning
+select * from air_quality 
+where lower(location_in_aus) like 'roz%';
+
+-- Find records where the pattern is at the end;
+select * from air_quality
+where lower(location_in_aus) like '%e';
+
+-- find records any where 
+select * from air_quality
+where lower(location_in_aus) like '%ll%';
+
+-- find records with exact match
+select * from air_quality
+where lower(location_in_aus) like 'sydney';
+
+--- Range checks: BETWEEN (provide range and is inclusive), IN (in is like combination of or )
+select * from air_quality 
+where value between 1 and 2;
+
+select * from air_quality
+where date_utc between '2020-01-01' and '2020-02-29'
+order by date_utc 
+limit 10;
+
+select * from air_quality 
+where parameter in ('co','no','so2');
+
+--- Date and time: date comparisons (e.g., date = '2024-07-01'), extracting parts of a date (e.g., YEAR(date), MONTH(date), DAY(date)), date arithmetic (e.g., date + INTERVAL '1 DAY')
+
+
+
+
+
+
+
+
+--- Insert New Data
+--- Update Existing Data
+--- Delete Data
+--- Group By
+--- Filter Groups with Having Clause
+--- Between Condition
+--- In Condition
+--- Like Condition
+--- Rename a Column
+--- Replace Entries in a Column
+--- Change Column Data Type
+--- Add a New Column
+--- Drop a Column
 
 
 
