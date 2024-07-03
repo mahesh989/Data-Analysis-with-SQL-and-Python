@@ -210,6 +210,49 @@ update air_quality
 set location_in_aus = replace(location_in_aus,'ROZELLE3', 'ROZELLE');
 select * from air_quality;
 
+--- Part-3
+select * from air_quality
+limit 5;
+--- Add a New Column
+alter table air_quality
+add column new_column integer;
+-- rename column
+alter table air_quality
+rename column new_column to new_new_column;
+-- change dtypes of column
+alter table air_quality
+alter column new_new_column type varchar(50)
+using new_new_column::varchar(50);
+--- Replace Entries in a Column
+update air_quality
+set location_in_aus =  replace(location_in_aus, 'hello', 'FLOREY');
+
+update air_quality
+set new_new_column = coalesce(new_new_column,'hello'); 
+
+update air_quality
+set new_new_column = replace(new_new_column, 'hello', 0);
+
+select * from air_quality
+limit 5;
+
+
+ALTER TABLE air_quality
+ADD COLUMN year INT;
+
+with updated as 
+(
+UPDATE air_quality
+SET year = EXTRACT(YEAR FROM date_utc)::INT
+returning *)
+select * from updated;
+
+--- Drop a Column
+alter table air_quality
+drop column year;
+
+
+
 
 
 --- Part-1
@@ -248,6 +291,17 @@ select * from air_quality;
 -- change dtypes of column
 --- begin , commit and rollback
 --- Replace Entries in a Column
+
+
+
+
+
+
+
+
+
+
+
 
 
 
