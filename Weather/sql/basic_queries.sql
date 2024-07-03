@@ -50,7 +50,7 @@ select * from air_quality
 where location_in_aus is not null and value is not null;
 
 ---  duplicate check
-select  location_in_aus, count(*) from air_quality
+select  location_in_aus count(*) from air_quality
 group by location_in_aus
 having count(*) > 1;
 
@@ -77,27 +77,6 @@ select avg(value) from air_quality;
 
 --- Sum of a Column
 select sum(value) from air_quality;
-
-
-
-
---- Part-1
---- Check for Sample Data
---- Row Count
---- Column Count
---- Shape (Row Count and Column Count Combined)
---- Column Names
---- Lower Entries and Trimming (Common Table Expression)
---- Sort Records in Ascending Order, Descending Order
---- IS NULL Check
---- IS NOT NULL Check
---- Duplicate Check
---- Find Distinct Entries
---- Count for Distinct Entries
---- Minimum Value of a Column
---- Maximum Value of a Column
---- Average Value of a Column
---- Sum of a Column
 
 
 --- Part - 2
@@ -153,28 +132,84 @@ limit 10;
 select * from air_quality 
 where parameter in ('co','no','so2');
 
---- Date and time: date comparisons (e.g., date = '2024-07-01'), extracting parts of a date (e.g., YEAR(date), MONTH(date), DAY(date)), date arithmetic (e.g., date + INTERVAL '1 DAY')
+--- Date and time: date comparisons (e.g., date = '2024-07-01')
+select * from air_quality 
+where date_utc = '2020-02-29';
+--- Extracting parts of a date: YEAR(date), MONTH(date), DAY(date)
+select *, extract(year from date_utc) as Year
+from air_quality;
+
+SELECT *, EXTRACT(YEAR FROM date_utc) AS Year
+FROM air_quality
+WHERE EXTRACT(YEAR FROM date_utc) = 2020 or EXTRACT(YEAR FROM date_utc) = 2021;
+
+select *, extract(month from date_utc) 
+from air_quality
+where  extract(month from date_utc) =1;
+
+select *,extract(day from date_utc)
+from air_quality 
+where extract(day from date_utc) between 1 and 15
+and extract (month from date_utc) = 1
+and extract (year from date_utc) = 2024;
+
+--- Date arithmetic: date + INTERVAL '1 DAY', date - INTERVAL '1 MONTH', CURRENT_DATE - INTERVAL '7 DAY'
+
+-- Find records and add 1 day to the date
+SELECT *, date_utc + INTERVAL '1 DAY' AS new_date
+FROM air_quality;
+
+-- Find records and subtract 1 month from the date
+SELECT *, date_utc - INTERVAL '1 MONTH' AS new_date
+FROM air_quality;
+
+-- Find records where the date is within the last 7 days
+SELECT * FROM air_quality
+WHERE date_utc >= CURRENT_DATE - INTERVAL '7 DAY'
+order by  date_utc desc;
 
 
 
 
 
+--- Part-1
+--- Check for Sample Data
+--- Row Count
+--- Column Count
+--- Shape (Row Count and Column Count Combined)
+--- Column Names
+--- Lower Entries and Trimming (Common Table Expression)
+--- Sort Records in Ascending Order, Descending Order
+--- IS NULL Check
+--- IS NOT NULL Check
+--- Duplicate Check
+--- Find Distinct Entries
+--- Count for Distinct Entries
+--- Minimum Value of a Column
+--- Maximum Value of a Column
+--- Average Value of a Column
+--- Sum of a Column
 
+--- Part-2
+--- Comparison operators: equal to, not equal to, greater than, less than, greater than or equal to, less than or equal to
+--- Logical operators: AND, OR, NOT
+--- Find records where the pattern starts in the beginning
+--- Find records where the pattern is at the end
+--- Find records anywhere
+--- Find records with exact match
+--- Date and time: date comparisons (e.g., date = '2024-07-01')
+--- Extracting parts of a date: YEAR(date), MONTH(date), DAY(date)
+--- Date arithmetic: date + INTERVAL '1 DAY', date - INTERVAL '1 MONTH', CURRENT_DATE - INTERVAL '7 DAY'
 
+--- Part -3
 
---- Insert New Data
---- Update Existing Data
---- Delete Data
---- Group By
---- Filter Groups with Having Clause
---- Between Condition
---- In Condition
---- Like Condition
 --- Rename a Column
 --- Replace Entries in a Column
 --- Change Column Data Type
 --- Add a New Column
 --- Drop a Column
+
+
 
 
 
