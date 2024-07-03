@@ -168,7 +168,47 @@ SELECT * FROM air_quality
 WHERE date_utc >= CURRENT_DATE - INTERVAL '7 DAY'
 order by  date_utc desc;
 
+--- Part -3
+select *from air_quality
+limit 5;
 
+--- Rename a Column
+alter table air_quality
+rename column location_of_aus to location_in_aus;
+
+--- Add a New Column
+alter table air_quality
+add column year int; 
+
+--- Drop a Column
+alter table air_quality
+drop column year;
+
+-- change dtypes of column
+ALTER TABLE air_quality
+ALTER COLUMN year TYPE DATE 
+USING MAKE_DATE(year, 1, 1);
+
+alter table air_quality 
+alter column value type varchar(50);
+
+alter table air_quality 
+alter column value type int
+using value::integer;
+
+ALTER TABLE air_quality
+ALTER COLUMN value TYPE float USING value::float;
+
+--- begin , commit and rollback
+begin;
+commit;
+rollback;
+
+--- Replace Entries in a Column
+
+update air_quality
+set location_in_aus = replace(location_in_aus,'ROZELLE3', 'ROZELLE');
+select * from air_quality;
 
 
 
@@ -201,20 +241,13 @@ order by  date_utc desc;
 --- Extracting parts of a date: YEAR(date), MONTH(date), DAY(date)
 --- Date arithmetic: date + INTERVAL '1 DAY', date - INTERVAL '1 MONTH', CURRENT_DATE - INTERVAL '7 DAY'
 
---- Part -3
-
+--- Part-3
 --- Rename a Column
---- Replace Entries in a Column
---- Change Column Data Type
 --- Add a New Column
 --- Drop a Column
-
-
-
-
-
-
-
+-- change dtypes of column
+--- begin , commit and rollback
+--- Replace Entries in a Column
 
 
 
