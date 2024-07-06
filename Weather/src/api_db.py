@@ -23,7 +23,8 @@ config = {
     "country": 'AU',
     "parameters": ['co', 'o3', 'ch4', 'pm25', 'pm4', 'pm10', 'so2', 'no', 'no2'],
     "interval_days": 30,
-    "database_url": f'postgresql+psycopg2://{db_username}:{db_password}@localhost:5433/yourdatabase'
+    "database_url": f'postgresql+psycopg2://{db_username}:{db_password}@localhost:5432/postgres'
+    
 }
 
 end_date = datetime.now(timezone.utc)
