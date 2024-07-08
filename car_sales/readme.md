@@ -2,7 +2,7 @@
 Report: Importing country.csv into PostgreSQL using Docker and pgAdmin 4
 ---
 
-### Objective
+## Objective
 The objective of this report is to provide a detailed guide for setting up PostgreSQL within a Docker container, configuring pgAdmin 4 for database management, and importing data from `country.csv` into PostgreSQL using Docker and pgAdmin 4.
 
 ### Ingredients
@@ -18,7 +18,7 @@ The objective of this report is to provide a detailed guide for setting up Postg
 
 ---
 
-#### Setting Up PostgreSQL Container
+## Setting Up PostgreSQL Container
 
  1.1. Open Docker Desktop
    - Navigate to the "Containers/Apps" section.
@@ -44,18 +44,18 @@ The objective of this report is to provide a detailed guide for setting up Postg
 
 ---
 
-#### Setting Up pgAdmin Container
+## Setting Up pgAdmin Container
 
-# 2.1. Open Docker Desktop
+### 2.1 Open Docker Desktop
    - Navigate to the "Containers/Apps" section.
 
-# 2.2. Create a New Container
+###  2.2. Create a New Container
    - Click on "New Container" or "Create Container".
 
-# 2.3. Select the pgAdmin Image
+### 2.3. Select the pgAdmin Image
    - Choose `dpage/pgadmin4:latest`.
 
-# 2.4. Configure the Container Settings
+###  2.4. Configure the Container Settings
    - Container Name: `pgadmin-container`
    - Ports:
      - Host port for 80/tcp: `5050` (to access pgAdmin on http://localhost:5050)
@@ -68,18 +68,18 @@ The objective of this report is to provide a detailed guide for setting up Postg
 
 ---
 
-#### Connecting pgAdmin to PostgreSQL
+## Connecting pgAdmin to PostgreSQL
 
-# 3.1. Open pgAdmin 4
+###  3.1. Open pgAdmin 4
    - Open your web browser and navigate to http://localhost:5050.
 
-# 3.2. Create a New Server in pgAdmin 4
+### 3.2. Create a New Server in pgAdmin 4
    - In the Object Browser on the left, right-click on "Servers" and select "Create" -> "Server...".
 
-# 3.3. General Tab
+### 3.3. General Tab
    - Name: Enter `PostgreSQL Docker`.
 
-# 3.4. Connection Tab
+### 3.4. Connection Tab
    - Host name/address: Enter `host.docker.internal`.
    - Port: Enter `5432`.
    - Maintenance database: Enter `yourdatabase`.
@@ -89,19 +89,19 @@ The objective of this report is to provide a detailed guide for setting up Postg
 
 ---
 
-#### Importing Data from `country.csv` into PostgreSQL
+## Importing Data from `country.csv` into PostgreSQL
 
-# 4.1. Prepare the CSV File
+###  4.1. Prepare the CSV File
    - Ensure `country.csv` is located at `/Users/mahesh/Documents/GitHub/EDA-and-Modelling-of-Retracted-Papers/data/raw/country.csv`.
 
-# 4.2. Copy File to Docker Container
+### 4.2. Copy File to Docker Container
    - Open a terminal and run:
      ```
      docker exec -it postgres-container mkdir -p /data
      docker cp /Users/mahesh/Documents/GitHub/EDA-and-Modelling-of-Retracted-Papers/data/raw/country.csv postgres-container:/data/country.csv
      ```
 
-# 4.3. Create Table in pgAdmin 4
+### 4.3. Create Table in pgAdmin 4
    - Open pgAdmin 4, navigate to your database, right-click, and select "Query Tool".
    - Run the following SQL command to create the table:
      ```sql
@@ -111,7 +111,7 @@ The objective of this report is to provide a detailed guide for setting up Postg
      );
      ```
 
-# 4.4. Import CSV Data into PostgreSQL
+### 4.4. Import CSV Data into PostgreSQL
    - In the Query Tool, run the following command to import the CSV file:
      ```sql
      COPY country_frequency (country, frequency)
@@ -122,6 +122,6 @@ The objective of this report is to provide a detailed guide for setting up Postg
 
 ---
 
-### Conclusion
+## Conclusion
 
 By following these steps, you should be able to successfully set up PostgreSQL within Docker, configure pgAdmin 4, and import `country.csv` data into your PostgreSQL database. Adjust paths and details as per your specific setup. If you encounter any issues or need further assistance, feel free to consult the respective documentation or ask for support.
