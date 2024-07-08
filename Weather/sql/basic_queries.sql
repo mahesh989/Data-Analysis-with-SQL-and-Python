@@ -135,6 +135,7 @@ where parameter in ('co','no','so2');
 --- Date and time: date comparisons (e.g., date = '2024-07-01')
 select * from air_quality 
 where date_utc = '2020-02-29';
+
 --- Extracting parts of a date: YEAR(date), MONTH(date), DAY(date)
 select *, extract(year from date_utc) as Year
 from air_quality;
