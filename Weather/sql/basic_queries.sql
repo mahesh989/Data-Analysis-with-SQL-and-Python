@@ -1,297 +1,405 @@
---- Part 1 
---- Check for Sample Data
-select * from air_quality;
+---Basic SQL Query Questions (20)
 
---- Row Count
-select count(*) from air_quality;
-
---- Column Count
-select count(*)
-from information_schema.columns 
-where table_name = 'air_quality';
-
---- Shape (Row Count and Column Count Combined)
-select 
-	(select count(*) as row_count from air_quality),
-	(select count(*) as column_count
-from information_schema.columns 
-where table_name = 'air_quality');
-
---- Column Names
+-- Select all columns from the dataset.
 select column_name
-from information_schema.columns
-where table_name = 'air_quality';
+	from information_schema.columns
+	where table_name = 'air_quality';
 
---- lower entries  and trimming , COMMON TABLE EXPRESSION
-update air_quality 
-set location_in_aus = upper(trim(location_in_aus));
-select *from air_quality;
+-- Retrieve the first 10 records from the dataset.
+select * 
+	from air_quality
+	limit 10;
 
-WITH updated AS (
-    UPDATE air_quality 
-    SET location_in_aus = upper(TRIM(location_in_aus))
-    RETURNING *
-)
-SELECT * FROM updated;
+-- Find all unique cities from the dataset.
+select distinct city
+	from air_quality;
+	
+-- Count the number of rows in the dataset.
+select count(*)
+	from air_quality;
 
+-- Select the "location_in_aus" and "city" columns where "country" is 'Australia'.
+select location_in_aus, city
+	from air_quality
+	where country= 'AU';
 
+-- Retrieve all columns where the "parameter" is 'PM2.5'.
+select * from air_quality limit 5;
 
---- Sort Records in Ascending Order,descending Order
-select * from air_quality 
-order by value desc
-limit 10;
+select * 
+	from air_quality
+	where lower(parameter) = 'pm25';
 
---- IS NULL Check 
-select * from air_quality
-where value is null and parameter is null;
+-- Get the current date and time.
+select  current_timestamp;
 
---- IS NOT NULL Check
-select * from air_quality
-where location_in_aus is not null and value is not null;
+-- Retrieve all records where "value" is between 10 and 20.
+select * 
+	from air_quality
+	where value between 10 and 20;
+	
+-- Find the maximum "value" from the dataset.
+select max(value)
+	from air_quality;
+	
+-- Select the "city" and "value" where "unit" is 'µg/m³'.
+select location_in_aus, value
+	from air_quality
+	where unit ='µg/m³';
+		
+-- List all records where "date_utc" is '2023-01-01'.
+SELECT *
+	FROM air_quality
+	WHERE date_utc = '2023-01-01';
 
----  duplicate check
-select  location_in_aus count(*) from air_quality
-group by location_in_aus
-having count(*) > 1;
+-- Find the minimum "value" for "PM10" parameter.
+select  min(value) 
+	from air_quality
+	where parameter = 'pm10';
 
-SELECT longitude, location_in_aus, COUNT(*) AS count
+-- Retrieve all columns where the "latitude" is greater than -30.
+select * 
+	from air_quality
+	where latitude > -30;
+
+-- Select the "longitude" and "value" where the "city" is 'Sydney'.
+select longitude, value
+	from air_quality
+	where location_in_aus = 'north maclean';
+	
+-- List all unique "parameters" in the dataset.
+select distinct parameter
+	from air_quality;
+	
+-- Count the number of records for each "city".
+select location_in_aus, count(*)
+	from air_quality
+	group by location_in_aus;
+	
+-- Retrieve all columns where "value" is greater than 50.
+select * 
+	from air_quality
+	where value > 50;
+	
+-- Find the average "value" for each "parameter".
+select parameter, avg(value)
+	from air_quality
+	group by parameter;
+	
+-- Select the "location_in_aus" and "date_measured" for records measured in '2023'.
+select location_in_aus, date_measured 
+	from air_quality 
+	where extract(year from date_measured) = 2023;
+
+	
+-- Retrieve all records where the "parameter" is 'PM10' and the "value" is greater than 50.
+select * 
+	from air_quality
+	where parameter = 'pm10' 
+	and value > 50;
+
+-- Select the "city" and "value" for the highest recorded measurement.
+select location_in_aus, value 
+	from air_quality
+	order by value desc
+	limit 1;
+
+-- Find the total number of measurements taken in 'Melbourne' in 2022.
+
+-- Find the total number of measurements taken in 'Melbourne' in 2022.
+SELECT COUNT(*)
 FROM air_quality
-GROUP BY longitude, location_in_aus
-HAVING COUNT(*) > 1;
+WHERE LOWER(location_in_aus) = 'rz' AND date_part('year', date_measured) = 2022;
 
-
---- Find Distinct Entries
-select distinct unit from air_quality;
-
---- Count for Distinct Entries
-select count(distinct parameter) as unique_parametr_number from air_quality;
-
---- Minimum Value of a Column
-select min(value) from air_quality;
-
---- Maximum Value of a Column
-select max(value) from air_quality;
-
---- Average Value of a Column
-select avg(value) from air_quality;
-
---- Sum of a Column
-select sum(value) from air_quality;
-
-
---- Part - 2
---- Filter Records Based on Condition
---- Comparison operators: equal to, not equal to, greater than, less than, greater than or equal to, less than or equal to
-select * from air_quality
-where id = 5;
-select * from air_quality
-where value <> 0;
-select * from air_quality
-where value > 9;
-select * from air_quality
-where value >= 9;
-select * from air_quality
-where value <= 9;
-
---- Logical operators: AND, OR, NOT
-select * from air_quality
-where value = 9.9 and parameter = 'pm25';
-
-select * from air_quality
-where value > 5 and lower(location_in_aus) = 'bathurst';
-
-SELECT * FROM air_quality
-WHERE not value > 10;
-
---- Pattern matching: LIKE
--- Find records where the pattern starts in the beginning
+	
+-- List all records where the "country" is 'Australia' and the "unit" is 'µg/m³'.
 select * from air_quality 
-where lower(location_in_aus) like 'roz%';
+limit 5;
 
--- Find records where the pattern is at the end;
-select * from air_quality
-where lower(location_in_aus) like '%e';
-
--- find records any where 
-select * from air_quality
-where lower(location_in_aus) like '%ll%';
-
--- find records with exact match
-select * from air_quality
-where lower(location_in_aus) like 'sydney';
-
---- Range checks: BETWEEN (provide range and is inclusive), IN (in is like combination of or )
-select * from air_quality 
-where value between 1 and 2;
 
 select * from air_quality
-where date_utc between '2020-01-01' and '2020-02-29'
-order by date_utc 
-limit 10;
+where country = 'AU' 
+and unit = 'µg/m³'
+limit 5;
 
-select * from air_quality 
-where parameter in ('co','no','so2');
-
---- Date and time: date comparisons (e.g., date = '2024-07-01')
-select * from air_quality 
-where date_utc = '2020-02-29';
-
---- Extracting parts of a date: YEAR(date), MONTH(date), DAY(date)
-select *, extract(year from date_utc) as Year
-from air_quality;
-
-SELECT *, EXTRACT(YEAR FROM date_utc) AS Year
-FROM air_quality
-WHERE EXTRACT(YEAR FROM date_utc) = 2020 or EXTRACT(YEAR FROM date_utc) = 2021;
-
-select *, extract(month from date_utc) 
+--Calculate the sum of all "values" recorded in 'Brisbane'.
+select location_in_aus,sum(value)
 from air_quality
-where  extract(month from date_utc) =1;
+where location_in_aus = 'prospect'
+group by location_in_aus;
 
-select *,extract(day from date_utc)
+-- Retrieve the "location_in_aus" with the lowest recorded "value".
+select location_in_aus, min(value)
+from air_quality
+group by location_in_aus
+order by location_in_aus asc
+limit 1;
+
+-- Select all records where "latitude" is between -35 and -30.
+select * 
+from air_quality
+where latitude between -35 and -30;
+
+-- Retrieve the "location_in_aus" and "date_measured" for the first 10 records in 2023.
+select location_in_aus, date_measured 
+from air_quality
+where date_part('year', date_measured) =2023
+order by  date_measured
+limit 10;
+
+select location_in_aus, date_measured 
+from air_quality
+where date_part('year',date_measured) = 2023
+order by date_measured
+limit 10;
+
+-- Count the number of records with a "value" greater than the average "value" for 'prospect'.87
+select count(*)
+from air_quality
+where value >
+(select avg(value)
+from air_quality
+where location_in_aus = 'prospect');
+
+
+
+
+
+-- Count the number of records with a "value" greater than the average "value" for 'prospect'.
+select count(*)
+from air_quality
+where value > (
+    select avg(value)
+    from air_quality
+    where location_in_aus = 'prospect'
+);
+
+-- Intermediate SQL Query Questions (40)
+
+-- Retrieve the total "value" for each "city".
+select location_in_aus, sum(value) from air_quality
+group by location_in_aus;
+
+
+-- List all "locations_in_aus" with more than 100 records.
+select location_in_aus, count(*)
+from air_quality
+group by location_in_aus
+having count(*) > 100
+order by count(*);
+
+-- Find the total number of measurements taken in each "location_in_aus".
+select * from air_quality
+limit 5;
+
+select location_in_aus, count(*)
+from air_quality
+group by location_in_aus;
+
+-- Select the "location_in_aus" and the total "value" measured in 2023.
+select location_in_aus, sum(value)
+from air_quality
+where date_part('year',date_measured) = 2023
+group by location_in_aus;
+
+-- Retrieve the location_in_aus of cities with an average "value" greater than 25.
+select location_in_aus
 from air_quality 
-where extract(day from date_utc) between 1 and 15
-and extract (month from date_utc) = 1
-and extract (year from date_utc) = 2024;
+group by location_in_aus
+having avg(value) > 25;
 
---- Date arithmetic: date + INTERVAL '1 DAY', date - INTERVAL '1 MONTH', CURRENT_DATE - INTERVAL '7 DAY'
+-- Find the second highest "value" in the dataset.
 
--- Find records and add 1 day to the date
-SELECT *, date_utc + INTERVAL '1 DAY' AS new_date
-FROM air_quality;
+select max(value) from air_quality
+where value < (select max(value) from air_quality);
 
--- Find records and subtract 1 month from the date
-SELECT *, date_utc - INTERVAL '1 MONTH' AS new_date
-FROM air_quality;
+-- Find the second highest "value" in the dataset.
+select distinct value
+from air_quality
+order by value asc
+offset 0 limit 1;
 
--- Find records where the date is within the last 7 days
-SELECT * FROM air_quality
-WHERE date_utc >= CURRENT_DATE - INTERVAL '7 DAY'
-order by  date_utc desc;
-
---- Part -3
-select *from air_quality
+-- Retrieve the top 5 highest "values" recorded.
+select distinct value
+from air_quality 
+order by value desc
 limit 5;
 
---- Rename a Column
-alter table air_quality
-rename column location_of_aus to location_in_aus;
+-- Find the total number of measurements for each "parameter".
+select parameter,  count(*) from air_quality
+group by parameter;
 
---- Add a New Column
-alter table air_quality
-add column year int; 
+-- Select the "location_in_aus" and "date_measured" for measurements taken in 2023.
+select location_in_aus, date_measured from air_quality
+where date_part('year',date_measured) = 2023;
 
---- Drop a Column
-alter table air_quality
-drop column year;
+-- List all location with no measurements in the last 6 months.
+/* hello */
+select  location_in_aus from air_quality
+group by location_in_aus
+having max(date_measured)  >= current_date - interval '6 months';
 
--- change dtypes of column
-ALTER TABLE air_quality
-ALTER COLUMN year TYPE DATE 
-USING MAKE_DATE(year, 1, 1);
+-- Retrieve the total "value" measured in each month.
+select date_part('month', date_measured) as month_of, sum(value) from air_quality
+group by month_of
+order by month_of;
 
-alter table air_quality 
-alter column value type varchar(50);
 
-alter table air_quality 
-alter column value type int
-using value::integer;
 
-ALTER TABLE air_quality
-ALTER COLUMN value TYPE float USING value::float;
+-- Find the average "value" for each "location".
+select location_in_aus, avg(value) from air_quality
+group by location_in_aus;
 
---- begin , commit and rollback
-begin;
-commit;
-rollback;
+-- Select the "parameter" and the number of records for each "parameter".
+select parameter, count(*) from air_quality 
+group by parameter
+order by parameter asc;
 
---- Replace Entries in a Column
+-- List all "location" with a "value" greater than the average "value".
 
-update air_quality
-set location_in_aus = replace(location_in_aus,'ROZELLE3', 'ROZELLE');
-select * from air_quality;
+select  location_in_aus from air_quality
+where value > (select avg(value) from air_quality); 
 
---- Part-3
-select * from air_quality
-limit 5;
---- Add a New Column
-alter table air_quality
-add column new_column integer;
--- rename column
-alter table air_quality
-rename column new_column to new_new_column;
--- change dtypes of column
-alter table air_quality
-alter column new_new_column type varchar(50)
-using new_new_column::varchar(50);
---- Replace Entries in a Column
-update air_quality
-set location_in_aus =  replace(location_in_aus, 'hello', 'FLOREY');
 
-update air_quality
-set new_new_column = coalesce(new_new_column,'hello'); 
+-- Retrieve the total "value" for each day.
+select date_part('day', date_measured) as each_day,sum(value) from air_quality
+group by each_day 
+order by each_day;
 
-update air_quality
-set new_new_column = replace(new_new_column, 'hello', 0);
+-- Find the highest and lowest "values" for each "parameter".
+select parameter, max(value),min(value) from air_quality
+group by parameter;
 
-select * from air_quality
+-- List all location with measurements greater than 50 in 2023.
+select location_in_aus, date_measured,value
+from air_quality
+where value > 50 
+and date_part('year',date_measured) = 2023
+order by value asc
 limit 5;
 
-
-ALTER TABLE air_quality
-ADD COLUMN year INT;
-
-with updated as 
-(
-UPDATE air_quality
-SET year = EXTRACT(YEAR FROM date_utc)::INT
-returning *)
-select * from updated;
-
---- Drop a Column
-alter table air_quality
-drop column year;
+-- Retrieve the names of locations with measurements in the last month.
+select location_in_aus, value, date_measured
+from air_quality
+where date_measured >= current_date - interval '1 month'
+order by date_measured asc;
 
 
+-- Find the average "value" for each "parameter".
+select parameter, avg(value)
+from air_quality
+group by parameter;
+
+-- Select the "location_in_aus" and the total "value" measured in each location.
+select location_in_aus, sum(value) as summ
+from air_quality
+group by location_in_aus
+order by summ asc;
+
+-- List all "parameters" measured more than 100 times.
+select parameter, count(*)
+from air_quality
+group by parameter
+having count(*)>100;
+
+
+-- Retrieve the names of location with measurements in the last month.
+select distinct location_in_aus
+from air_quality
+where date_measured < current_date - interval '1 month';
+
+-- Find the average "value" for each month.
+select date_part('month', date_measured) as month_date, avg(value)
+from air_quality
+group by month_date
+order by month_date asc;
+
+
+-- Find the average "value" for each month by year
+select date_part('year', date_measured) as year_date, date_part('month', date_measured) as month_date, avg(value)
+from air_quality
+group by year_date, month_date
+order by year_date asc, month_date asc;
+
+-- Retrieve the cumulative "value" for each day.
+select 
+    date_measured, 
+    value, 
+    sum(value) over(order by date_measured)
+from air_quality
+order by date_measured asc;
+
+SELECT 
+    date_measured, 
+    value, 
+    SUM(value) OVER (ORDER BY date_measured) AS cumulative_value
+FROM 
+    air_quality
+ORDER BY 
+    date_measured;
+
+-- Find the average "value" per city.
+SELECT
+    avg(value),
+    location_in_aus
+from 
+    air_quality
+group by
+    location_in_aus;
+
+-- Retrieve the total number of measurements in the last year.
+SELECT 
+    date_part('year', date_measured) AS last_year,
+    COUNT(*)
+FROM 
+    air_quality
+WHERE 
+    date_measured >= current_date - interval '1 year'
+GROUP BY 
+    date_part('year', date_measured);
 
 
 
---- Part-1
---- Check for Sample Data
---- Row Count
---- Column Count
---- Shape (Row Count and Column Count Combined)
---- Column Names
---- Lower Entries and Trimming (Common Table Expression)
---- Sort Records in Ascending Order, Descending Order
---- IS NULL Check
---- IS NOT NULL Check
---- Duplicate Check
---- Find Distinct Entries
---- Count for Distinct Entries
---- Minimum Value of a Column
---- Maximum Value of a Column
---- Average Value of a Column
---- Sum of a Column
 
---- Part-2
---- Comparison operators: equal to, not equal to, greater than, less than, greater than or equal to, less than or equal to
---- Logical operators: AND, OR, NOT
---- Find records where the pattern starts in the beginning
---- Find records where the pattern is at the end
---- Find records anywhere
---- Find records with exact match
---- Date and time: date comparisons (e.g., date = '2024-07-01')
---- Extracting parts of a date: YEAR(date), MONTH(date), DAY(date)
---- Date arithmetic: date + INTERVAL '1 DAY', date - INTERVAL '1 MONTH', CURRENT_DATE - INTERVAL '7 DAY'
+--Scalar Subqueries
+-- Retrieve the "location_in_aus" with the highest average "value".
+select 
+    location_in_aus, 
+     avg(value) 
+from 
+    air_quality
+group by
+    location_in_aus
+order by avg(value)  desc
+offset 0 limit 1;
 
---- Part-3
---- Rename a Column
---- Add a New Column
---- Drop a Column
--- change dtypes of column
---- begin , commit and rollback
---- Replace Entries in a Column
+-- Find the "parameter" with the most measurements.
+select
+	parameter,
+	count(*)
+from air_quality
+group by parameter
+order by count(*) desc
+limit 1;
+
+-- List the "location" with the latest measurement date.
+select 
+	distinct location_in_aus
+from 
+	air_quality
+where
+	date_measured > current_date - interval '1 month';
+
+
+-- List the "location_in_aus" with the latest measurement date.
+SELECT location_in_aus
+FROM air_quality
+WHERE date_measured = (
+    SELECT MAX(date_measured)
+    FROM air_quality
+);
+
+
 
 
 
