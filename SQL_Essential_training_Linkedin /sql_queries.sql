@@ -718,8 +718,56 @@ select min(total),max(total) from invoice;
 
 -- Subqueries
 -- Find customers who have never made a purchase.
+SELECT 
+    c.customerid,
+    c.firstname || ' ' || c.lastname AS "Customer Name"
+FROM 
+    customer c
+LEFT JOIN 
+    invoice i ON c.customerid = i.customerid
+WHERE 
+    i.invoiceid IS NULL
+ORDER BY 
+    c.customerid;
+
 -- List employees who have not been assigned any customers.
+SELECT 
+    e.firstname || ' ' || e.lastname AS "Employee Name",
+    e.employeeid
+FROM 
+    employee e
+LEFT JOIN 
+    customer c ON c.supportrepid = e.employeeid
+WHERE 
+    c.supportrepid IS NULL
+ORDER BY 
+    e.employeeid;
+
+
 -- Retrieve customers who made their first purchase in 2011.
+WITH first_purchase AS (
+    SELECT 
+        customerid, 
+        MIN(invoicedate) AS "First Purchase date"
+    FROM 
+        invoice 
+    GROUP BY
+        customerid
+)
+SELECT
+    c.customerid, 
+    c.firstname || ' ' || c.lastname AS "Customer Name",
+    fp."First Purchase date"
+FROM
+    first_purchase fp
+JOIN customer c
+    ON c.customerid = fp.customerid
+WHERE
+    date_part('year', fp."First Purchase date") = 2011
+ORDER BY
+    c.customerid;
+
+
 -- Find the top 5 customers by total purchases.
 -- List invoices that have more than a certain number of line items (e.g., 5).
 
