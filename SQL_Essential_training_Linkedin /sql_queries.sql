@@ -860,10 +860,94 @@ ORDER BY
 
 -- Advanced Filtering
 -- Retrieve customers who made purchases in multiple years.
+select
+	distinct c.customerid, 
+	c.firstname ||' '|| c.lastname as "Customer Name",
+	count(distinct date_part('year', i.invoicedate)) as "Count"
+from
+	customer c
+join 
+	invoice i on c.customerid = i.customerid
+group by 
+	c.customerid, 
+	c.firstname,
+	c.lastname
+having 
+	count(distinct date_part('year', i.invoicedate)) >1
+order by 
+	"Count" desc;
+
+
 -- List employees who support customers from different countries.
+-- List employees who support customers from different countries.
+SELECT 
+    e.employeeid, 
+    e.firstname || ' ' || e.lastname AS "Employee Name",
+    count (distinct c.country) as "Count of Customer Country"
+FROM 
+	employee e 
+join 
+	customer c on c.supportrepid = e.employeeid
+group by 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname
+having 
+	 count (distinct c.country) > 1
+order by 
+	"Count of Customer Country";
+
 -- Find invoices with a total amount greater than the average invoice total.
+select 
+	invoiceid, 
+	total as "Total amount"
+from 
+	invoice 
+where 
+	total > (select avg(total) from invoice)
+order by 
+	total desc;
+
 -- Retrieve the most recent purchase date for each customer.
+select
+	c.customerid,
+	c.firstname ||' '|| c.lastname as "Customer Name",
+	max(i.invoicedate) as "Recent Date"
+from 
+	customer c
+join 
+	invoice i on i.customerid = c.customerid
+group by 
+	c.customerid, c.firstname, c.lastname
+order by 
+	"Recent Date" desc;
+
 -- List customers who have made purchases in every year since 2011.
+WITH years AS (
+    SELECT DISTINCT date_part('year', invoicedate) AS year
+    FROM invoice
+    WHERE date_part('year', invoicedate) >= 2011
+),
+customer_years AS (
+    SELECT c.customerid, date_part('year', i.invoicedate) AS year
+    FROM customer c
+    JOIN invoice i ON c.customerid = i.customerid
+    WHERE date_part('year', i.invoicedate) >= 2011
+)
+SELECT 
+    c.customerid,
+    c.firstname || ' ' || c.lastname AS "Customer Name"
+FROM customer c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM years y
+    LEFT JOIN customer_years cy ON c.customerid = cy.customerid AND y.year = cy.year
+    WHERE cy.year IS NULL
+)
+ORDER BY c.customerid DESC;
+
+
+
 
 -- Combining Multiple Conditions
 -- Retrieve customers from a specific country who made purchases in 2011.
