@@ -769,14 +769,94 @@ ORDER BY
 
 
 -- Find the top 5 customers by total purchases.
--- List invoices that have more than a certain number of line items (e.g., 5).
+with total_purchase as (
+	select 
+		customerid, 
+		sum(total) as "Total Purchases"
+		from 
+			invoice 
+		group by
+			customerid)
+select
+	c.customerid, 
+	c.firstname ||' '|| c.lastname as "Customer Name",
+	tp."Total Purchases"
+from
+	total_purchase tp
+join customer c
+	on c.customerid = tp.customerid
+order by
+	tp."Total Purchases" desc
+limit
+	5;
 
 -- Grouping and Aggregation
 -- Calculate the total sales per country.
+select
+     billingcountry,
+     sum(total) as "Total sales"
+from 
+     invoice
+group by 
+     billingcountry
+order by 
+     "Total sales";
 -- Find the average transaction amount per employee.
+SELECT 
+    e.employeeid, 
+    e.firstname || ' ' || e.lastname AS "Employee Name",
+    AVG(i.total) AS "Average Transaction Amount"
+FROM 
+    employee e
+JOIN 
+    customer c ON c.supportrepid = e.employeeid
+JOIN 
+    invoice i ON c.customerid = i.customerid
+GROUP BY
+    e.employeeid, e.firstname, e.lastname;
+
 -- List the number of invoices issued per month.
+SELECT 
+	date_part('year',invoicedate) as "Year",
+	date_part('month',invoicedate) as "Month",
+	count(*) as "Number of invoices"
+from 
+	invoice i
+group by 
+	"Year",
+	"Month"
+order by 
+	"Year",
+	"Month";
 -- Calculate the total number of customers per support rep.
+select 
+	e.employeeid,
+	e.firstname ||' '|| e.lastname as "Suppor Rep Name",
+	count(c.customerid) as "Number of Customers"
+from 
+	employee e
+join
+	customer c on c.supportrepid = e.employeeid
+group by 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname
+order by
+	"Number of Customers" desc;
+
+
+
+
 -- Find the average invoice total for each year.
+SELECT 
+    date_part('year', invoicedate) AS "Year",
+    avg(i.total) AS "Average Invoice Total"
+FROM 
+    invoice i
+GROUP BY 
+    "Year"
+ORDER BY 
+    "Year";
 
 -- Advanced Filtering
 -- Retrieve customers who made purchases in multiple years.
