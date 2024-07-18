@@ -1427,10 +1427,151 @@ where
 
 -- Additional Scenarios
 -- Find customers who made purchases but do not have a support rep.
+select 
+	c.customerid,
+	c.firstname, 
+	c.lastname, 
+	c.supportrepid
+from 
+	customer c
+join 
+	invoice i on c.customerid = i.customerid
+where 
+	i.total is not null
+and
+	c.supportrepid is null;
+
 -- List employees who support customers with high total purchases.
+	-- my appraoch is 
+		--employee with respective customers with purchase
+		-- customer with high total purchase 
+		-- employw who support high purchase customer 
+
+-- List employees who support customers with high total purchases.
+WITH employee_with_customer_purchase AS (
+    SELECT 
+        e.employeeid, 
+        e.firstname AS employee_firstname, 
+        e.lastname AS employee_lastname, 
+        c.customerid, 
+        c.firstname AS customer_firstname, 
+        c.lastname AS customer_lastname,
+        SUM(i.total) AS purchase
+    FROM 
+        employee e
+    JOIN 
+        customer c ON e.employeeid = c.supportrepid
+    JOIN 
+        invoice i ON i.customerid = c.customerid
+    GROUP BY 
+        e.employeeid, 
+        e.firstname, 
+        e.lastname, 
+        c.customerid, 
+        c.firstname, 
+        c.lastname
+),
+customer_high_purchase AS (
+    SELECT 
+        chp.customerid, 
+        chp.customer_firstname, 
+        chp.customer_lastname,
+        chp.purchase
+    FROM 
+        employee_with_customer_purchase chp
+    WHERE 
+        chp.purchase > 1000
+)
+SELECT 
+    ecp.employeeid, 
+    ecp.employee_firstname AS firstname, 
+    ecp.employee_lastname AS lastname,
+    chp.purchase
+FROM
+    employee_with_customer_purchase ecp
+JOIN 
+    customer_high_purchase chp ON ecp.customerid = chp.customerid;
+
+	
+
+
+-- List employees who support customers with high total purchases.
+-- List employees who support customers with high total purchases.
+SELECT 
+    e.employeeid, 
+    e.firstname AS emp_firstname, 
+    e.lastname AS emp_lastname, 
+    c.customerid, 
+    c.firstname AS cust_firstname, 
+    c.lastname AS cust_lastname,
+    SUM(i.total) AS total_purchase
+FROM 
+    employee e
+JOIN 
+    customer c ON e.employeeid = c.supportrepid
+JOIN 
+    invoice i ON i.customerid = c.customerid
+GROUP BY 
+    e.employeeid, 
+    e.firstname, 
+    e.lastname, 
+    c.customerid, 
+    c.firstname, 
+    c.lastname
+HAVING 
+    SUM(i.total) > 1000
+ORDER BY 
+    e.employeeid;
+
+	
 -- Retrieve customers with missing information (e.g., no email or phone number).
 -- Find the total sales per city.
+select 
+	i.billingcity,
+	sum(total)
+from 
+ 	invoice i
+group by 
+	i.billingcity;
+
+
+
+
+-- Rank invoices by total amount within each billing country
+SELECT
+    i.*,
+    RANK() OVER (PARTITION BY i.billingcountry ORDER BY i.total DESC) AS "Rank"
+FROM 
+    invoice i;
+
 -- List the top 5 customers by number of transactions.
+SELECT *
+FROM (
+    SELECT 
+        c.customerid, 
+        c.firstname, 
+        c.lastname,
+        COUNT(i.invoiceid) AS number_of_transactions,
+        RANK() OVER (ORDER BY COUNT(i.invoiceid) DESC) AS rank
+    FROM 
+        customer c
+    JOIN 
+        invoice i ON c.customerid = i.customerid
+    GROUP BY 
+        c.customerid, 
+        c.firstname, 
+        c.lastname
+) AS x
+WHERE 
+    x.rank <= 5
+ORDER BY 
+    x.rank;
+
+
+	
+
+
+
 
 -- Financial Analysis
 -- Calculate the total sales per employee and per month.
