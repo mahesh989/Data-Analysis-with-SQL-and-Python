@@ -730,6 +730,19 @@ WHERE
 ORDER BY 
     c.customerid;
 
+
+SELECT 
+    c.customerid,
+    c.firstname || ' ' || c.lastname AS "Customer Name"
+FROM 
+    customer c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM invoice i
+    WHERE i.customerid = c.customerid
+);
+
+
 -- List employees who have not been assigned any customers.
 SELECT 
     e.firstname || ' ' || e.lastname AS "Employee Name",
@@ -937,7 +950,8 @@ customer_years AS (
 SELECT 
     c.customerid,
     c.firstname || ' ' || c.lastname AS "Customer Name"
-FROM customer c
+FROM 
+	customer c
 WHERE NOT EXISTS (
     SELECT 1
     FROM years y
@@ -948,27 +962,468 @@ ORDER BY c.customerid DESC;
 
 
 
+-- List customers who have made purchases in every year since 2011.
+with years as (
+	select 
+		distinct date_part('year',invoicedate) as year 
+	from 
+		invoice
+	where 
+		date_part('year',invoicedate) >=2011
+),
+customers_years as (
+	select 
+		customerid,
+		date_part('year',invoicedate) as year 
+	from 
+		invoice 
+	where 
+		date_part('year',invoicedate) >=2011)
+select 
+	c.customerid,
+	c.firstname ||' '|| c.lastname
+from
+	customer c 
+where not exists(
+	select 1
+	from years y 
+	left join customers_years as cy on  c.customerid = cy.customerid and cy.year = y.year 
+	where cy.year is null
+)
+ORDER BY 
+    c.customerid DESC;
+	
 
+-- Find employees who have never been assigned as support representatives to any customer.
+select 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname
+from 
+	employee e
+where not exists (
+	select 1
+	from customer c 
+	where c.supportrepid = e.employeeid
+)
+order by 
+	e.employeeid;
+
+--List all invoices along with the customer's name and the sales representative (employee) who supports them.
+SELECT 
+    i.invoiceid,
+    i.invoicedate,
+    c.firstname || ' ' || c.lastname AS "Customer Name",
+    e.firstname || ' ' || e.lastname AS "Sales Rep Name"
+FROM 
+    invoice i
+JOIN 
+    customer c ON i.customerid = c.customerid
+JOIN 
+    employee e ON c.supportrepid = e.employeeid
+ORDER BY 
+    i.invoiceid;
+
+  
+--Find all customers who have never made a purchase (i.e., have no corresponding invoices).
+select 
+	c.customerid, 
+	c.firstname, 
+	c.lastname
+from 
+	customer c
+where not exists(
+	select 1
+	from invoice i 
+	where c.customerid = i.customerid
+);
+
+--Find all employers who have never assigned to any customer
+select 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname
+from 
+	employee e
+where not exists (
+	select 1 
+	from customer c
+	where c.supportrepid = e.employeeid
+);
+
+--Find the top 5 customers by total amount spent on purchases.
+select 
+	c.customerid,
+	sum(total) as "Total Amount"
+from 
+	customer c
+join 
+	invoice i on c.customerid = i.customerid
+group by 
+	c.customerid
+order by
+	"Total Amount" desc
+limit 5;
+	
+
+
+--Identify invoices where the total amount is greater than the average invoice total for all invoices.
+select 
+	i.invoiceid,
+	i.total
+from 
+	invoice i
+where 
+	i.total > (select avg(total) from invoice)
+order by 
+	i.total desc;
+
+
+--List all support representatives (employees) who have supported customers from multiple countries.
+select 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname,
+	count(distinct c.country)
+from 
+	employee e
+join 
+	customer c on c.supportrepid = e.employeeid
+group by 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname
+having
+	count(distinct c.country) > 1
+order by
+	count(distinct c.country);
+
+	
+--Find customers who have made purchases only in the current year
+select 
+	c.customerid, 
+	c.firstname, 
+	c.lastname,
+	i.invoicedate
+from 
+	customer c
+join
+	invoice i on c.customerid = i.customerid
+where 	
+	i.invoicedate = current_date
+order by 
+	i.invoicedate desc;
+	
+	
 -- Combining Multiple Conditions
 -- Retrieve customers from a specific country who made purchases in 2011.
+select 
+	c.customerid, 
+	c.firstname, 
+	c.lastname,
+	c.country,
+	i.invoicedate
+from 
+	customer c
+join
+	invoice i on c.customerid = i.customerid
+where 	
+	date_part('year', invoicedate) = 2011
+and 
+	country = 'France'
+order by 
+	i.invoicedate desc;
+
 -- Find employees hired after a certain date who support customers from Canada.
+
+select 
+	distinct e.employeeid,
+	e.firstname, 
+	e.lastname, 
+	e.hiredate
+from 
+	employee e
+join 
+	customer c on c.supportrepid = e.employeeid
+where 
+	e.hiredate > '2000-01-01'
+and 
+	c.country = 'Canada'
+order by 
+	e.hiredate;
+
 -- List invoices with a total amount greater than a certain value and issued in 2012.
+select 
+	i.invoiceid,
+	i.total
+from 
+	invoice i
+where 
+	i.total > 10
+and 
+	date_part('year',invoicedate) = 2012
+order by
+	i.total desc;
 -- Find customers with no support rep who made purchases in 2011.
+
+SELECT 
+    c.customerid,
+    c.firstname, 
+    c.lastname,
+    i.invoicedate
+FROM 
+    customer c 
+JOIN 
+    invoice i ON c.customerid = i.customerid
+WHERE 
+    c.supportrepid IS NULL
+AND 
+    date_part('year', i.invoicedate) = 2011
+ORDER BY
+    c.customerid;
+
 -- Retrieve employees who support customers from more than one country.
+SELECT 
+    e.employeeid, 
+    e.firstname, 
+    e.lastname,
+    COUNT(DISTINCT c.country) AS country_count
+FROM 
+    employee e
+JOIN 
+    customer c ON e.employeeid = c.supportrepid
+GROUP BY 
+    e.employeeid, 
+    e.firstname, 
+    e.lastname
+HAVING 
+    COUNT(DISTINCT c.country) > 1;
 
 -- Complex Aggregations
 -- Calculate the total sales per employee and per year.
+select 
+	date_part('year',i.invoicedate),
+	e.employeeid,
+	e.firstname, 
+	e.lastname, 
+	sum(i.total) as "Total Sales"
+from
+	employee e
+join
+	customer c on e.employeeid =  c.supportrepid
+join 
+	invoice i on i.customerid = c.customerid
+group by 
+	e.employeeid,
+	e.firstname, 
+	e.lastname, 
+	date_part('year',i.invoicedate)
+order by 
+	date_part('year',i.invoicedate),
+	"Total Sales" desc;
+	
+
 -- Find the average number of invoices per customer per year.
+select 
+	year,
+	avg(invoice_count) AS avg_invoices_per_customer
+from (
+	select 
+		c.customerid,
+		date_part('year',i.invoicedate) as year,
+		count(i.invoiceid) as invoice_count
+	from 
+		invoice i
+	join 
+		customer c on i.customerid = c.customerid
+	group by 
+		c.customerid,
+		date_part('year',i.invoicedate)
+) AS yearly_invoices
+GROUP BY 
+    year
+ORDER BY 
+    year;
+
+
 -- List the top 3 employees by total sales for each year.
+select * from (
+	select 
+		e.employeeid,
+		e.firstname ||' '|| e.lastname as "Employer Name",
+		sum(i.total) as "Total Sales",
+		date_part('year',i.invoicedate) as "Year",
+		rank() over(partition by date_part('year',i.invoicedate) order by sum(i.total) desc ) as "Rank"
+	from 
+		customer c
+	join
+		employee e on c.supportrepid = e.employeeid
+	join 
+		invoice i on c.customerid = i.customerid
+	group by 
+		e.employeeid,
+		c.supportrepid, 
+		date_part('year',i.invoicedate)	
+) as x
+where x."Rank" < 4;
+
 -- Calculate the monthly sales growth rate.
+with monthly_sales as (
+	select 
+		date_trunc('month',invoicedate) as "month",
+		sum(total) as "monthly sales"
+	from 
+		invoice 
+	group by 
+		date_trunc('month',invoicedate)
+),
+previous_month_sales as (
+	select 
+		month, 
+		"monthly sales",
+		lag("monthly sales") over(order by month) as "previous month sales"
+	from 
+		monthly_sales
+)
+select 
+	"month",
+	"monthly sales",
+	"previous month sales",
+	case
+		when "previous month sales" is null then null
+		else round((("monthly sales" - "previous month sales")/"previous month sales")* 100,2)
+    END AS growth_rate
+from 
+	previous_month_sales;
+
+
 -- Find the average invoice amount per support rep.
+select 
+	c.supportrepid, 
+	avg(i.total)
+from 
+	customer c
+join 
+	invoice i on c.customerid = i.customerid
+group by 
+	c.supportrepid;
+
 
 -- Analyzing Transactions
 -- List customers with the highest total transaction amounts.
+	-- total transaction of each customers 
+with total_transaction_customer as (
+	select 
+		c.customerid, 
+		c.firstname, 
+		c.lastname, 
+		sum(i.total) as total_transaction
+	from
+		customer c
+	join 
+		invoice i on c.customerid = i.customerid
+	group by 
+		c.customerid, 
+		c.firstname, 
+		c.lastname)
+select 
+	c.customerid, 
+	c.firstname, 
+	c.lastname,
+	total_transaction
+from 
+	total_transaction_customer c
+where 
+	total_transaction = (select max(total_transaction) from total_transaction_customer );
+	
 -- Find employees with the highest number of customers supported.
+with number_of_customer_per_employee as (
+select 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname, 
+	count(c.customerid) as "count" 
+from 
+	employee e
+join 
+	customer c on c.supportrepid = e.employeeid
+group by 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname)
+select 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname,
+	"count" 
+from 
+	number_of_customer_per_employee e
+where 
+	"count" = (select max("count" ) from number_of_customer_per_employee);
+	
+
+
 -- Calculate the average transaction amount for each customer.
+
+select 
+	c.customerid, 
+	c.firstname, 
+	c.lastname,
+	avg(i.total)
+from 
+	customer c
+join 
+	invoice i on c.customerid = i.customerid
+group by 
+	c.customerid, 
+	c.firstname, 
+	c.lastname;
+
 -- Retrieve the top 10 transactions by amount.
+select * from (
+	select
+		i.invoiceid,
+		i.total,
+		rank() over (order by i.total desc) as  "Rank"
+	from
+		invoice i) as x
+	where 
+		x."Rank" < 11;
+
 -- List employees who have generated sales above a certain threshold.
+
+with employee_sales as (
+	select 
+		e.employeeid, 
+		e.firstname, 
+		e.lastname,
+		sum(i.total) as "Sales Generated by employee"
+	from 
+		employee e
+	join 
+		customer c on e.employeeid = c.supportrepid
+	join 
+		invoice i on c.customerid = i.customerid
+	group by 
+		e.employeeid, 
+		e.firstname, 
+		e.lastname
+)
+select 
+	e.employeeid, 
+	e.firstname, 
+	e.lastname,
+	e."Sales Generated by employee"
+from 
+	employee_sales e
+where 
+	e."Sales Generated by employee" > 100;
+	
+	
+	
+	
+
+
 
 -- Additional Scenarios
 -- Find customers who made purchases but do not have a support rep.
