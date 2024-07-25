@@ -30,9 +30,10 @@ Database Schema:
 */
 
 /* Schema Information */
+```SQL
 -- 1. List all tables in the public schema
 -- 2. List columns in the customer table
--- 3. List columns and data types in the invoiceline table
+-- 3. List columns and data types in the invoiceline table ```
 
 /* Basic Table Operations */
 -- 4. Select all records from the invoice table

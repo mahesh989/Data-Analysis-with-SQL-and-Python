@@ -1,100 +1,42 @@
-# WSDA Music Database SQL Queries
+```markdown
+# Welcome to My GitHub Profile! 👋🏾
 
-## Overview
+I'm **Maheshwor Tiwari**, a data-driven professional with over 5 years of experience in research methodologies and data visualization. I am currently a part-time Data Analyst at [The Bitrates](http://www.thebitrates.com).
 
-This repository contains a collection of SQL queries designed to analyze and manipulate data from the WSDA Music Database. The database consists of several interconnected tables: `employee`, `customer`, `invoice`, and `invoiceline`. We cover schema information retrieval, basic table operations, data cleaning, counting and aggregations, joins, customer analysis, employee and sales analysis, and more.
+## About Me
 
-## Database Schema
+I specialize in turning data into actionable insights, leveraging my strong background in Physics and Data Science. Currently, I am in the final semester of my Master of Data Science at Charles Darwin University, where I maintain a distinction average. My technical skills in Python, SQL, and various data visualization tools enable me to solve complex problems and deliver clear, data-driven solutions.
 
-| employee    | customer     | invoice      | invoiceline  |
-|-------------|--------------|--------------|--------------|
-| employeeid  | supportrepid | invoiceid    | invoiceid    |
-| lastname    | customerid   | customerid   | trackid      |
-| firstname   | firstname    | invoicedate  | unitprice    |
-| title       | lastname     | billingaddress | quantity    |
-| reportsto   | company      | billingcity  |              |
-| birthdate   | address      | billingstate |              |
-| hiredate    | city         | billingcountry |              |
-| address     | state        | billingpostalcode |          |
-| city        | country      | total        |              |
-| state       | postalcode   |              |              |
-| country     | phone        |              |              |
-| postalcode  | fax          |              |              |
-| phone       | email        |              |              |
-| fax         | supportrepid |              |              |
-| email       |              |              |              |
+## Ongoing Portfolio Projects
 
-## Categories of SQL Queries
+[__Practicing SQL with DataLemur__](https://github.com/mahesh989/Data-Analysis-with-SQL-and-Python/tree/main/Practicing%20SQL%20with%20DataLemur)
 
-### Schema Information
-1. List all tables in the public schema
-2. List columns in the customer table
-3. List columns and data types in the invoiceline table
+## Recently Finished Portfolio Projects
 
-### Basic Table Operations
-4. Select all records from the invoice table
-5. Add a column to the invoice table
-6. Drop a column from the invoice table
-7. Rename a column in the invoice table
-8. Change the data type of a column in the invoice table
-9. Begin a transaction
-10. Select records from the invoice table where billing city is Ottawa
+- [__SQL Essential Training (LinkedIn)__](https://github.com/mahesh989/Data-Analysis-with-SQL-and-Python/tree/main/SQL_Essential_training_Linkedin)
+- [__Weather Data Analysis__](https://github.com/mahesh989/Data-Analysis-with-SQL-and-Python/tree/main/Weather)
 
-### Data Cleaning and Updates
-11. Update billing address fields in the invoice table to trimmed lower case
-12. Correct misspelling in the billing city field
+## 👨🏾‍💼 Professional Experience
 
-### Counting and Aggregations
-13. Count the total number of customers
-14. Find duplicate customers by first name and last name
-15. Count the total number of employees
-16. Count the number of invoices created in the year 2010
-17. Calculate the total sales for the year 2010
-18. Find the total number of transactions in each year
-19. Find the total sales amount for each year
-20. Find the number of invoices created in each month of 2012
-21. Find the average transaction amount in the invoice table
+- **Data Analyst Internship** at iBuild Building Solutions, Victoria, Australia
+- **Data Insight & Analyst Internship** at Property Console, Sydney, Australia
+- **Research Assistant** at CY Cergy Paris University, Cergy-Pontoise, France
 
-### Joins and Customer Analysis
-25. Join the invoice table with the customer table on CustomerId
-26. Find the customers associated with the employee who made the highest commission
-27. List all customers along with their support representatives' names
-28. List all invoices along with the customer's name and email
-29. Find the total number of invoices per customer
+## ⚒️ Technical Skills
 
-### Employee and Sales Analysis
-30. Find the sales reps and total transaction amounts for each customer between 2011 and 2012
-31. Create a commission payout column that calculates 15% of the sales transaction amount for each employee
-32. List the top 3 employees by total commission earned
-33. Find the average transaction amount for each customer
-34. Calculate the total sales per employee and per year
-35. Calculate the average number of invoices per customer per year
-36. List the top 3 employees by total sales for each year
-37. Calculate the monthly sales growth rate
-38. Find the average invoice amount per support rep
+- **Visualization & Analytics Tools**: Tableau, Power BI, Excel, Google Analytics
+- **Programming & Data Analysis**: Python, SQL, HTML, CSS
+- **Software & Platforms**: GitHub, Visual Studio Code, Basecamp, MS Word, PowerPoint, Docker, Snowflake
+- **Databases**: PostgreSQL, MySQL
 
-### In-depth Customer and Financial Analysis
-39. Find the customer who made the highest purchase
-40. Examine the record of the customer who made the highest purchase for any suspicious details
-41. Identify any employee whose total sales exceed the average transaction amount for 2011 and 2012
-42. Calculate the total sales per employee and per quarter
-43. List the top 5 transactions by amount for each year
-44. Find customers who have made purchases in every year since 2011
+## 📕 How to Connect With Me
 
-### Additional Analysis
-45. List all support representatives (employees) who have supported customers from multiple countries
-46. List all invoices along with the customer's name and the sales representative (employee) who supports them
-47. Retrieve customers with missing information (e.g., no email or phone number)
-48. Find the total sales per city
-49. Rank invoices by total amount within each billing country
+- [__LinkedIn__](https://www.linkedin.com/in/maheshwortiwari/)
+- [__Medium - Data Analytics Blog__](#)
 
-### Combining Multiple Conditions
-50. Retrieve customers from a specific country who made purchases in 2011
-51. Find employees hired after a certain date who support customers from Canada
+## 💫 Job Titles of Interest
 
-## Setup Instructions
+- Data Analyst
 
-1. Clone the repository to your local machine.
-2. Open pgAdmin 4 and connect to your PostgreSQL database.
-3. Use the provided SQL scripts in the appropriate categories to perform your analysis.
-4. Ensure to switch databases and execute commands in the correct context when necessary.
+---
+```
