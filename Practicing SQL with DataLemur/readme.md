@@ -61,5 +61,6 @@ GROUP BY
 HAVING 
     COUNT(skill) = 3
 ORDER BY 
-    candidate_id; ```
+    candidate_id; 
+```
 
